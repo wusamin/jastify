@@ -90,7 +90,9 @@ public class Jastify {
             }
             if (response.body() != null) {
                 System.out.println("success!!");
-                return Optional.of(response.body().string());
+                String body = response.body().string();
+                System.out.println("body: " + body);
+                return Optional.of(body);
             }
         } catch (IOException e) {
             e.printStackTrace();
