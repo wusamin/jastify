@@ -275,52 +275,6 @@ public class Jastify {
                 .build());
     }
 
-    public void startMusicWithItem(String deviceId, String[] tracks) {
-        String url = MessageUtil.get("spotify.url.me.player.startPlayback");
-
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("device_id", deviceId);
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
-        final FormBody.Builder formBuilder = new FormBody.Builder();
-
-        Map<String, String> requestBodyMap = new HashMap<>();
-        String json = "{\"uris\":[\"spotify:track:4pN2gEeV8rgSw4vIEjjz74\"]}";
-
-        String test = null;
-
-        Map<String, String[]> map = new HashMap<String, String[]>();
-
-        map.put("uris", tracks);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            test = objectMapper.writeValueAsString(map);
-        } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
-            e.printStackTrace();
-        }
-
-        System.out.println(test);
-
-        requestBodyMap.forEach(formBuilder::add);
-
-        RequestBody requestBody = RequestBody.create(JSON, test);
-
-        Request request =
-            new Request.Builder().url(urlBuilder.build())
-                    .put(requestBody)
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build();
-
-        sendRequest(request).ifPresent(p -> {
-            System.out.println(p);
-        });
-    }
-
     public void playTracks(SpotifyDevice device, List<SpotifyTrack> tracks) {
         String url = MessageUtil.get("spotify.url.me.player.startPlayback");
 
@@ -349,13 +303,10 @@ public class Jastify {
 
         System.out.println(test);
 
-        Request request =
-            new Request.Builder().url(urlBuilder.build())
-                    .put(RequestBody.create(JSON, test))
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build();
-
-        sendRequestV2(request);
+        sendRequestV2(new Request.Builder().url(urlBuilder.build())
+                .put(RequestBody.create(JSON, test))
+                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                .build());
     }
 
     public PlayingItem getNowPlaying() {
@@ -436,21 +387,16 @@ public class Jastify {
 
         requestBodyMap.forEach(formBuilder::add);
 
-        Request request =
-            new Request.Builder().url(url)
+        Map<String, Object> jsonMap =
+            parseJsonNest(sendRequestV2(new Request.Builder().url(url)
                     .post(formBuilder.build())
                     .addHeader(TOKEN_KEY, result)
-                    .build();
+                    .build()).get("body"));
 
-        sendRequest(request).ifPresent(p -> {
-            Map<String, Object> jsonMap = parseJsonNest(p);
-            String a_token = jsonMap.get("access_token").toString();
-            System.out.println(a_token);
+        String a_token = jsonMap.get("access_token").toString();
+        System.out.println(a_token);
 
-            token = a_token;
-
-        });
-
+        token = a_token;
     }
 
     /**
