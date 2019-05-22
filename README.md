@@ -37,7 +37,7 @@ Jastify jastify = new Jastify.Builder()
 
 // from foo.properties
 Jastify jastify = new Jastify.Builder()
-                         .load("foo.properties")
+                         .load("foo")
                          .build();
 
 

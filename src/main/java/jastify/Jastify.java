@@ -555,7 +555,7 @@ public class Jastify {
          * @return
          */
         public Builder load() {
-            return loadFile("jastify");
+            return load("jastify");
         }
 
         /**
@@ -564,7 +564,7 @@ public class Jastify {
          * @param fileName
          * @return
          */
-        public Builder loadFile(String fileName) {
+        public Builder load(String fileName) {
             ResourceBundle bundle = null;
             try {
                 bundle =
