@@ -1,9 +1,6 @@
 package jastify;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +8,12 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Optional;
-import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import javax.management.RuntimeErrorException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +26,7 @@ import jastify.dto.SearchResultPlaylists;
 import jastify.dto.SearchResultTracks;
 import jastify.dto.SpotifyDevice;
 import jastify.dto.SpotifyTrack;
+import jastify.dto.UsersProfile;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -80,6 +81,7 @@ public class Jastify {
         return jsonMap;
     }
 
+    @Deprecated
     private Optional<String> sendRequest(Request request) {
         try (Response response =
             new OkHttpClient().newCall(request).execute()) {
@@ -185,7 +187,6 @@ public class Jastify {
 
         try {
             t = mapper.readValue(map.get("body"), SearchResultAlbums.class);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -301,8 +302,6 @@ public class Jastify {
             e.printStackTrace();
         }
 
-        System.out.println(test);
-
         sendRequestV2(new Request.Builder().url(urlBuilder.build())
                 .put(RequestBody.create(JSON, test))
                 .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
@@ -342,12 +341,6 @@ public class Jastify {
     public void getUsersPlaylist() {
         String url = MessageUtil.get("spotify.url.user.playlists");
 
-        final Request.Builder builder = new Request.Builder();
-
-        //        Map<String, String> httpHeaderMap = new HashMap<>();
-        //        httpHeaderMap.put("Authorization", "Bearer " + token.getToken());
-        //        httpHeaderMap.forEach(builder::addHeader);
-
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
 
         Map<String, String> params = new HashMap<>();
@@ -356,7 +349,7 @@ public class Jastify {
         params.put("market", "JP");
         params.forEach(urlBuilder::addEncodedQueryParameter);
 
-        sendRequest(builder.url(urlBuilder.build())
+        sendRequest(new Request.Builder().url(urlBuilder.build())
                 .addHeader("Authorization", TOKEN_PREFIX + token)
                 .build()).ifPresent(p -> {
                     Map<String, Object> jsonMap = parseJsonNest(p);
@@ -364,6 +357,9 @@ public class Jastify {
                 });
     }
 
+    /**
+     * refresh access token
+     */
     public void refreshToken() {
         final String url = MessageUtil.get("spotify.url.api.refreshToken");
 
@@ -394,7 +390,7 @@ public class Jastify {
                     .build()).get("body"));
 
         String a_token = jsonMap.get("access_token").toString();
-        System.out.println(a_token);
+        //        System.out.println(a_token);
 
         token = a_token;
     }
@@ -445,36 +441,57 @@ public class Jastify {
         return t;
     }
 
-    public void spotifyDevice() {
-        String url = MessageUtil.get("spotify.url.me.player.devices");
-        final Request.Builder builder = new Request.Builder();
+    public UsersProfile usersProfile(String userID) {
+        String url = MessageUtil.get("spotify.url.user") + userID;
 
-        Map<String, String> httpHeaderMap = new HashMap<>();
-        httpHeaderMap.put("Accept", "application/json");
-        httpHeaderMap.put("Content-Type", "application/json");
-        httpHeaderMap.put("Authorization", "Bearer " + token);
-        httpHeaderMap.forEach(builder::addHeader);
+        Request request =
+            new Request.Builder().url(url)
+                    .addHeader("Accept", "application/json")
+                    .addHeader("user_id", userID)
+                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                    .build();
 
-        Request request = builder.url(url).build();
+        Map<String, String> map = sendRequestV2(request);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        ObjectMapper mapper = new ObjectMapper();
+        UsersProfile t = new UsersProfile();
+        t.setCode(Integer.valueOf(map.get("code")));
 
-        try (Response response = okHttpClient.newCall(request).execute()) {
-            int responseCode = response.code();
-            System.out.println("responseCode: " + responseCode);
-
-            if (!response.isSuccessful()) {
-                System.out.println("error!!");
-                System.out.println("body: " + response.body().string());
-            }
-            if (response.body() != null) {
-                System.out.println("body: " + response.body().string());
-            }
+        try {
+            t = mapper.readValue(map.get("body"), UsersProfile.class);
         } catch (IOException e) {
             // TODO 自動生成された catch ブロック
             e.printStackTrace();
         }
+
+        return t;
     }
+
+    //    public Category category() {
+    //        String url = MessageUtil.get("spotify.url.me.player.devices");
+    //
+    //        Request request =
+    //            new Request.Builder().url(url)
+    //                    .addHeader("Accept", "application/json")
+    //                    .addHeader("Content-Type", "application/json")
+    //                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+    //                    .build();
+    //
+    //        Map<String, String> map = sendRequestV2(request);
+    //
+    //        ObjectMapper mapper = new ObjectMapper();
+    //        Devices t = new Devices();
+    //        t.setCode(Integer.valueOf(map.get("code")));
+    //
+    //        try {
+    //            t = mapper.readValue(map.get("body"), Devices.class);
+    //        } catch (IOException e) {
+    //            // TODO 自動生成された catch ブロック
+    //            e.printStackTrace();
+    //        }
+    //
+    //        return t;
+    //    }
 
     public static class Builder {
         private String token;
@@ -516,35 +533,39 @@ public class Jastify {
             return this;
         }
 
-        public Builder load(String fileName) {
-            Properties properties = loadFile(fileName);
+        /**
+         * load paramters from jastify.properties.
+         *
+         * @return
+         */
+        public Builder load() {
+            return loadFile("jastify");
+        }
 
-            token(properties.getProperty("token"))
-                    .refreshToken(properties.getProperty("refreshToken"))
-                    .clientSecret(properties.getProperty("clientSecret"))
-                    .clientID(properties.getProperty("clientID"))
-                    .code(properties.getProperty("code"));
+        /**
+         * load parameters from .properties file specified.
+         *
+         * @param fileName
+         * @return
+         */
+        public Builder loadFile(String fileName) {
+            ResourceBundle bundle = null;
+            try {
+                bundle =
+                    ResourceBundle.getBundle(fileName,
+                            ResourceBundle.Control.getControl(
+                                    ResourceBundle.Control.FORMAT_DEFAULT));
+            } catch (MissingResourceException e) {
+                e.printStackTrace();
+                throw new RuntimeErrorException(null, e.getMessage());
+            }
+            token(bundle.getString("token"))
+                    .refreshToken(bundle.getString("refreshToken"))
+                    .clientSecret(bundle.getString("clientSecret"))
+                    .clientID(bundle.getString("clientID"))
+                    .code(bundle.getString("code"));
 
             return this;
-        }
-
-        public Builder load() {
-            return load("jastify.properties");
-        }
-
-        private static Properties loadFile(String resourceFile) {
-            try (InputStream is =
-                ClassLoader.getSystemResourceAsStream(resourceFile);
-                    InputStreamReader isr =
-                        new InputStreamReader(is, StandardCharsets.UTF_8);
-                    BufferedReader reader = new BufferedReader(isr)) {
-                Properties props = new Properties();
-                props.load(reader);
-                return props;
-            } catch (IOException e) {
-                System.out.println(String.format("failed to load %s"));
-                throw new RuntimeException(e);
-            }
         }
 
     }
