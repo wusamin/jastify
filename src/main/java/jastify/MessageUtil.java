@@ -1,5 +1,6 @@
 package jastify;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 public class MessageUtil {
@@ -12,4 +13,7 @@ public class MessageUtil {
         return source.getString(key);
     }
 
+    public static String get(String key, String replacement) {
+        return MessageFormat.format(source.getString(key), replacement);
+    }
 }

@@ -47,6 +47,8 @@ public class Jastify {
 
     private String clientSecret;
 
+    private String userID;
+
     private Jastify() {
     }
 
@@ -56,6 +58,7 @@ public class Jastify {
         this.refreshToken = builder.refreshToken;
         this.clientID = builder.clientID;
         this.clientSecret = builder.clientSecret;
+        this.userID = builder.userID;
     }
 
     private static final String JOIN = "%20";
@@ -107,9 +110,9 @@ public class Jastify {
         try (Response response =
             new OkHttpClient().newCall(request).execute()) {
             System.out.println("responseCode: " + response.code());
+
             if (!response.isSuccessful()) {
                 System.out.println("API calling has failed...");
-                System.out.println("body : " + response.body().string());
             }
             if (response.body() != null) {
                 Map<String, String> map = new HashMap<>();
@@ -441,8 +444,14 @@ public class Jastify {
         return t;
     }
 
+    public UsersProfile usersProfile() {
+        return usersProfile(userID);
+    }
+
     public UsersProfile usersProfile(String userID) {
-        String url = MessageUtil.get("spotify.url.user") + userID;
+        String url = MessageUtil.get("spotify.url.user", userID);
+
+        System.out.println(url);
 
         Request request =
             new Request.Builder().url(url)
@@ -504,12 +513,19 @@ public class Jastify {
 
         private String clientSecret;
 
+        private String userID;
+
         public Jastify build() {
             return new Jastify(this);
         }
 
         public Builder token(String token) {
             this.refreshToken = token;
+            return this;
+        }
+
+        public Builder userID(String userID) {
+            this.userID = userID;
             return this;
         }
 
@@ -559,12 +575,12 @@ public class Jastify {
                 e.printStackTrace();
                 throw new RuntimeErrorException(null, e.getMessage());
             }
-            token(bundle.getString("token"))
-                    .refreshToken(bundle.getString("refreshToken"))
-                    .clientSecret(bundle.getString("clientSecret"))
-                    .clientID(bundle.getString("clientID"))
-                    .code(bundle.getString("code"));
-
+            token(bundle.getString("spotify.token"))
+                    .refreshToken(bundle.getString("spotify.refreshToken"))
+                    .clientSecret(bundle.getString("spotify.clientSecret"))
+                    .clientID(bundle.getString("spotify.clientID"))
+                    .code(bundle.getString("spotify.code"))
+                    .userID(bundle.getString("spotify.userID"));
             return this;
         }
 
