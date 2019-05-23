@@ -130,8 +130,8 @@ public class Jastify {
         return new HashMap<>();
     }
 
-    public SearchResultTracks searchTracks(String[] searchWords, String market,
-            int limit) {
+    private Map<String, String> search(String[] searchWords, String market,
+            int limit, String type) {
         final String url = MessageUtil.get("spotify.url.api.search");
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
@@ -139,23 +139,29 @@ public class Jastify {
         Map<String, String> params = new HashMap<>();
         params.put("q",
                 Arrays.stream(searchWords).collect(Collectors.joining(JOIN)));
-        params.put("type", "track");
+        params.put("type", type);
         params.put("market", market);
         params.put("limit", String.valueOf(limit));
 
         params.forEach(urlBuilder::addEncodedQueryParameter);
 
-        Map<String, String> map =
-            sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build());
+        return sendRequestV2(new Request.Builder().url(urlBuilder.build())
+                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                .build());
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
+    public SearchResultTracks searchTracks(String[] searchWords, String market,
+            int limit) {
+
+        Map<String, String> map = search(searchWords, market, limit, "track");
+
         SearchResultTracks t = new SearchResultTracks();
         t.setCode(Integer.valueOf(map.get("code")));
 
         try {
-            t = mapper.readValue(map.get("body"), SearchResultTracks.class);
+            t =
+                new ObjectMapper().readValue(map.get("body"),
+                        SearchResultTracks.class);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -166,30 +172,16 @@ public class Jastify {
 
     public SearchResultAlbums searchAlbums(String[] searchWords, String market,
             int limit) {
-        final String url = MessageUtil.get("spotify.url.api.search");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        Map<String, String> map = search(searchWords, market, limit, "album");
 
-        Map<String, String> params = new HashMap<>();
-        params.put("q",
-                Arrays.stream(searchWords).collect(Collectors.joining(JOIN)));
-        params.put("type", "album");
-        params.put("market", market);
-        params.put("limit", String.valueOf(limit));
-
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
-        Map<String, String> map =
-            sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build());
-
-        ObjectMapper mapper = new ObjectMapper();
         SearchResultAlbums t = new SearchResultAlbums();
         t.setCode(Integer.valueOf(map.get("code")));
 
         try {
-            t = mapper.readValue(map.get("body"), SearchResultAlbums.class);
+            t =
+                new ObjectMapper().readValue(map.get("body"),
+                        SearchResultAlbums.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -199,30 +191,16 @@ public class Jastify {
 
     public SearchResultArtists searchArtists(String[] searchWords,
             String market, int limit) {
-        final String url = MessageUtil.get("spotify.url.api.search");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        Map<String, String> map = search(searchWords, market, limit, "artist");
 
-        Map<String, String> params = new HashMap<>();
-        params.put("q",
-                Arrays.stream(searchWords).collect(Collectors.joining(JOIN)));
-        params.put("type", "album");
-        params.put("market", market);
-        params.put("limit", String.valueOf(limit));
-
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
-        Map<String, String> map =
-            sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build());
-
-        ObjectMapper mapper = new ObjectMapper();
         SearchResultArtists t = new SearchResultArtists();
         t.setCode(Integer.valueOf(map.get("code")));
 
         try {
-            t = mapper.readValue(map.get("body"), SearchResultArtists.class);
+            t =
+                new ObjectMapper().readValue(map.get("body"),
+                        SearchResultArtists.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,32 +210,18 @@ public class Jastify {
 
     public SearchResultPlaylists searchPlaylists(String[] searchWords,
             String market, int limit) {
-        final String url = MessageUtil.get("spotify.url.api.search");
-
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("q",
-                Arrays.stream(searchWords).collect(Collectors.joining(JOIN)));
-        params.put("type", "playlist");
-        params.put("market", market);
-        params.put("limit", String.valueOf(limit));
-
-        params.forEach(urlBuilder::addEncodedQueryParameter);
 
         Map<String, String> map =
-            sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build());
+            search(searchWords, market, limit, "playlist");
 
-        ObjectMapper mapper = new ObjectMapper();
         SearchResultPlaylists t = new SearchResultPlaylists();
         t.setCode(Integer.valueOf(map.get("code")));
 
         try {
-            t = mapper.readValue(map.get("body"), SearchResultPlaylists.class);
+            t =
+                new ObjectMapper().readValue(map.get("body"),
+                        SearchResultPlaylists.class);
         } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
             e.printStackTrace();
         }
 
