@@ -16,6 +16,7 @@ import javax.management.RuntimeErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jastify.base.SpotifyResponseBase;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
 import jastify.dto.SearchResultAlbums;
@@ -70,114 +71,85 @@ public class Jastify {
             int limit, String type) {
         final String url = JastifyUtils.get("spotify.url.api.search");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("q",
-                Arrays.stream(searchWords).collect(Collectors.joining(JOIN)));
-        params.put("type", type);
-        params.put("market", market);
-        params.put("limit", String.valueOf(limit));
-
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
         return JastifyUtils
-                .sendRequestV2(new Request.Builder().url(urlBuilder.build())
+                .sendRequestV2(new Request.Builder()
+                        .url(HttpUrl.parse(url)
+                                .newBuilder()
+                                .addEncodedQueryParameter("q",
+                                        Arrays.stream(searchWords)
+                                                .collect(Collectors
+                                                        .joining(JOIN)))
+                                .addEncodedQueryParameter("type", type)
+                                .addEncodedQueryParameter("market", market)
+                                .addEncodedQueryParameter("limit",
+                                        String.valueOf(limit))
+                                .build())
                         .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
                         .build());
     }
 
-    public SearchResultTracks searchTracks(String[] searchWords, String market,
-            int limit) {
+    private <T extends SpotifyResponseBase> T setResult(
+            Map<String, String> apiResult, Class<T> clazz) {
 
-        Map<String, String> map = search(searchWords, market, limit, "track");
+        T dto = null;
+        try {
+            dto = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e1) {
+            // TODO 自動生成された catch ブロック
+            e1.printStackTrace();
+            return dto;
+        }
 
-        SearchResultTracks t = new SearchResultTracks();
-        t.setCode(Integer.valueOf(map.get("code")));
+        dto.setCode(Integer.valueOf(apiResult.get("code")));
 
         try {
-            t =
-                new ObjectMapper().readValue(map.get("body"),
-                        SearchResultTracks.class);
+            dto = new ObjectMapper().readValue(apiResult.get("body"), clazz);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return t;
+        return dto;
+    }
+
+    public SearchResultTracks searchTracks(String[] searchWords, String market,
+            int limit) {
+        return setResult(search(searchWords, market, limit, "track"),
+                SearchResultTracks.class);
     }
 
     public SearchResultAlbums searchAlbums(String[] searchWords, String market,
             int limit) {
-
-        Map<String, String> map = search(searchWords, market, limit, "album");
-
-        SearchResultAlbums t = new SearchResultAlbums();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t =
-                new ObjectMapper().readValue(map.get("body"),
-                        SearchResultAlbums.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return t;
+        return setResult(search(searchWords, market, limit, "album"),
+                SearchResultAlbums.class);
     }
 
     public SearchResultArtists searchArtists(String[] searchWords,
             String market, int limit) {
-
-        Map<String, String> map = search(searchWords, market, limit, "artist");
-
-        SearchResultArtists t = new SearchResultArtists();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t =
-                new ObjectMapper().readValue(map.get("body"),
-                        SearchResultArtists.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return t;
+        return setResult(search(searchWords, market, limit, "artist"),
+                SearchResultArtists.class);
     }
 
     public SearchResultPlaylists searchPlaylists(String[] searchWords,
             String market, int limit) {
-
-        Map<String, String> map =
-            search(searchWords, market, limit, "playlist");
-
-        SearchResultPlaylists t = new SearchResultPlaylists();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t =
-                new ObjectMapper().readValue(map.get("body"),
-                        SearchResultPlaylists.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return t;
+        return setResult(search(searchWords, market, limit, "playlist"),
+                SearchResultPlaylists.class);
     }
 
     public void startMusic(String deviceId) {
         String url = JastifyUtils.get("spotify.url.me.player.startPlayback");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("device_id", deviceId);
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
-        JastifyUtils.sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                .put(new FormBody.Builder().build())
-                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                .build());
+        JastifyUtils
+                .sendRequestV2(
+                        new Request.Builder()
+                                .url(HttpUrl.parse(url)
+                                        .newBuilder()
+                                        .addEncodedQueryParameter("device_id",
+                                                deviceId)
+                                        .build())
+                                .put(new FormBody.Builder().build())
+                                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                                .build());
     }
 
     /**
@@ -187,18 +159,25 @@ public class Jastify {
      * @param device
      * @return
      */
-    public boolean setVolume(int volumePercent, SpotifyDevice device) {
-        return true;
+    public void setVolume(int volumePercent, SpotifyDevice device) {
+
+        final String url = JastifyUtils.get("spotify.url.me.player.setVolume");
+
+        JastifyUtils.sendRequestV2(new Request.Builder()
+                .url(HttpUrl.parse(url)
+                        .newBuilder()
+                        .addEncodedQueryParameter("volume_percent",
+                                String.valueOf(volumePercent))
+                        .addEncodedQueryParameter("device_id", device.getId())
+                        .build())
+                .put(RequestBody.create(null, new byte[] {}))
+                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                .build());
+
     }
 
     public void playTracks(SpotifyDevice device, List<SpotifyTrack> tracks) {
         String url = JastifyUtils.get("spotify.url.me.player.startPlayback");
-
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("device_id", device.getId());
-        params.forEach(urlBuilder::addEncodedQueryParameter);
 
         List<String> trackIdList = new ArrayList<>();
 
@@ -217,40 +196,32 @@ public class Jastify {
             e.printStackTrace();
         }
 
-        JastifyUtils.sendRequestV2(new Request.Builder().url(urlBuilder.build())
-                .put(RequestBody.create(JSON, test))
-                .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                .build());
+        JastifyUtils
+                .sendRequestV2(new Request.Builder()
+                        .url(HttpUrl.parse(url)
+                                .newBuilder()
+                                .addEncodedQueryParameter("device_id",
+                                        device.getId())
+                                .build())
+                        .put(RequestBody.create(JSON, test))
+                        .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                        .build());
     }
 
     public PlayingItem getNowPlaying() {
         String url = JastifyUtils.get("spotify.url.me.player.currentlyPlaying");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-
-        Map<String, String> params = new HashMap<>();
-        params.put("market", "JP");
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
         Request request =
-            new Request.Builder().url(urlBuilder.build())
+            new Request.Builder()
+                    .url(HttpUrl.parse(url)
+                            .newBuilder()
+                            .addEncodedQueryParameter("market", "JP")
+                            .build())
                     .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
                     .build();
 
-        Map<String, String> map = JastifyUtils.sendRequestV2(request);
-
-        ObjectMapper mapper = new ObjectMapper();
-        PlayingItem t = new PlayingItem();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t = mapper.readValue(map.get("body"), PlayingItem.class);
-        } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
-            e.printStackTrace();
-        }
-
-        return t;
+        return setResult(JastifyUtils.sendRequestV2(request),
+                PlayingItem.class);
     }
 
     public void getUsersPlaylist() {
@@ -290,25 +261,15 @@ public class Jastify {
                         .encodeToString(
                                 source.getBytes(StandardCharsets.UTF_8));
 
-        final FormBody.Builder formBuilder = new FormBody.Builder();
-
-        Map<String, String> requestBodyMap = new HashMap<>();
-        requestBodyMap.put("grant_type", "refresh_token");
-        requestBodyMap.put("refresh_token", refreshToken);
-
-        requestBodyMap.forEach(formBuilder::add);
-
         Map<String, Object> jsonMap =
-            JastifyUtils
-                    .parseJsonNest(
-                            JastifyUtils
-                                    .sendRequestV2(
-                                            new Request.Builder().url(url)
-                                                    .post(formBuilder.build())
-                                                    .addHeader(TOKEN_KEY,
-                                                            result)
-                                                    .build())
-                                    .get("body"));
+            JastifyUtils.parseJsonNest(
+                    JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+                            .post(new FormBody.Builder()
+                                    .add("grant_type", "refresh_token")
+                                    .add("refresh_token", refreshToken)
+                                    .build())
+                            .addHeader(TOKEN_KEY, result)
+                            .build()).get("body"));
 
         //        System.out.println(a_token);
 
