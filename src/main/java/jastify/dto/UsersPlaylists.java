@@ -2,13 +2,14 @@ package jastify.dto;
 
 import java.util.List;
 
+import jastify.base.SpotifyResponseBase;
 import lombok.Data;
 
 @Data
-public class Playlist {
+public class UsersPlaylists extends SpotifyResponseBase {
     private String href;
 
-    private List<SpotifyPlaylistItem> items;
+    private List<SpotifyPlaylist> items;
 
     private int limit;
 
@@ -19,5 +20,4 @@ public class Playlist {
     private String previous;
 
     private int total;
-
 }

@@ -1,6 +1,7 @@
 package jastify;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +12,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
-import javax.management.RuntimeErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,6 +24,7 @@ import jastify.dto.SearchResultPlaylists;
 import jastify.dto.SearchResultTracks;
 import jastify.dto.SpotifyDevice;
 import jastify.dto.SpotifyTrack;
+import jastify.dto.UsersPlaylists;
 import jastify.dto.UsersProfile;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -69,7 +69,7 @@ public class Jastify {
 
     private Map<String, String> search(String[] searchWords, String market,
             int limit, String type) {
-        final String url = JastifyUtils.get("spotify.url.api.search");
+        final var url = JastifyUtils.get("spotify.url.api.search");
 
         return JastifyUtils
                 .sendRequestV2(new Request.Builder()
@@ -93,11 +93,12 @@ public class Jastify {
 
         T dto = null;
         try {
-            dto = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e1) {
-            // TODO 自動生成された catch ブロック
+            dto = clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e1) {
+            // TODO Auto-generated catch block
             e1.printStackTrace();
-            return dto;
         }
 
         dto.setCode(Integer.valueOf(apiResult.get("code")));
@@ -137,7 +138,8 @@ public class Jastify {
     }
 
     public void startMusic(String deviceId) {
-        String url = JastifyUtils.get("spotify.url.me.player.startPlayback");
+        final String url =
+            JastifyUtils.get("spotify.url.me.player.startPlayback");
 
         JastifyUtils
                 .sendRequestV2(
@@ -224,23 +226,26 @@ public class Jastify {
                 PlayingItem.class);
     }
 
-    public void getUsersPlaylist() {
+    public UsersPlaylists usersPlaylist(int limit, int offset, String market) {
         String url = JastifyUtils.get("spotify.url.user.playlists");
 
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        return setResult(
+                JastifyUtils
+                        .sendRequestV2(new Request.Builder()
+                                .url(HttpUrl.parse(url)
+                                        .newBuilder()
+                                        .addEncodedQueryParameter("market",
+                                                market)
+                                        .addEncodedQueryParameter("offset",
+                                                String.valueOf(limit))
+                                        .addEncodedQueryParameter("offset",
+                                                String.valueOf(offset))
+                                        .build())
+                                .addHeader("Authorization",
+                                        TOKEN_PREFIX + token)
 
-        Map<String, String> params = new HashMap<>();
-        params.put("limit", "5");
-        params.put("offset", "0");
-        params.put("market", "JP");
-        params.forEach(urlBuilder::addEncodedQueryParameter);
-
-        JastifyUtils.sendRequest(new Request.Builder().url(urlBuilder.build())
-                .addHeader("Authorization", TOKEN_PREFIX + token)
-                .build()).ifPresent(p -> {
-                    Map<String, Object> jsonMap = JastifyUtils.parseJsonNest(p);
-                    System.out.println(p);
-                });
+                                .build()),
+                UsersPlaylists.class);
     }
 
     /**
@@ -277,7 +282,7 @@ public class Jastify {
     }
 
     /**
-     * return s device available on spotify specified by name.
+     * return s device available on Spotify specified by name.
      *
      * @param deviceName
      * @return
@@ -292,34 +297,21 @@ public class Jastify {
     }
 
     /**
-     * return all devices available on spotify.
+     * return all devices available on Spotify.
      *
      * @return
      */
     public Devices devices() {
-        String url = JastifyUtils.get("spotify.url.me.player.devices");
+        final String url = JastifyUtils.get("spotify.url.me.player.devices");
 
-        Request request =
-            new Request.Builder().url(url)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build();
+        return setResult(
+                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+                        .addHeader("Accept", "application/json")
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                        .build()),
+                Devices.class);
 
-        Map<String, String> map = JastifyUtils.sendRequestV2(request);
-
-        ObjectMapper mapper = new ObjectMapper();
-        Devices t = new Devices();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t = mapper.readValue(map.get("body"), Devices.class);
-        } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
-            e.printStackTrace();
-        }
-
-        return t;
     }
 
     /**
@@ -340,26 +332,14 @@ public class Jastify {
     public UsersProfile usersProfile(String userID) {
         String url = JastifyUtils.get("spotify.url.user", userID);
 
-        Map<String, String> map =
-            JastifyUtils.sendRequestV2(new Request.Builder().url(url)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("user_id", userID)
-                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
-                    .build());
+        return setResult(
+                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+                        .addHeader("Accept", "application/json")
+                        .addHeader("user_id", userID)
+                        .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                        .build()),
+                UsersProfile.class);
 
-        UsersProfile t = new UsersProfile();
-        t.setCode(Integer.valueOf(map.get("code")));
-
-        try {
-            t =
-                new ObjectMapper().readValue(map.get("body"),
-                        UsersProfile.class);
-        } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
-            e.printStackTrace();
-        }
-
-        return t;
     }
 
     //    public Category category() {
@@ -459,7 +439,7 @@ public class Jastify {
                                     ResourceBundle.Control.FORMAT_DEFAULT));
             } catch (MissingResourceException e) {
                 e.printStackTrace();
-                throw new RuntimeErrorException(null, e.getMessage());
+                //                throw new RuntimeErrorException(null, e.getMessage());
             }
             token(bundle.getString("spotify.token"))
                     .refreshToken(bundle.getString("spotify.refreshToken"))

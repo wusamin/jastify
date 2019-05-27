@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,28 +39,6 @@ public class JastifyUtils {
             e.printStackTrace();
         }
         return jsonMap;
-    }
-
-    @Deprecated
-    protected static Optional<String> sendRequest(Request request) {
-        try (Response response =
-            new OkHttpClient().newCall(request).execute()) {
-            System.out.println("responseCode: " + response.code());
-            if (!response.isSuccessful()) {
-                System.out.println("error!!");
-                System.out.println("body: " + response.body().string());
-            }
-            if (response.body() != null) {
-                System.out.println("success!!");
-                String body = response.body().string();
-                System.out.println("body: " + body);
-                return Optional.of(body);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Optional.empty();
     }
 
     protected static Map<String, String> sendRequestV2(Request request) {
