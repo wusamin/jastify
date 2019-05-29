@@ -18,10 +18,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jastify.base.SpotifyResponseBase;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
+import jastify.dto.RelatedArtsits;
 import jastify.dto.SearchResultAlbums;
 import jastify.dto.SearchResultArtists;
 import jastify.dto.SearchResultPlaylists;
 import jastify.dto.SearchResultTracks;
+import jastify.dto.SpotifyArtist;
 import jastify.dto.SpotifyDevice;
 import jastify.dto.SpotifyTrack;
 import jastify.dto.UsersPlaylists;
@@ -69,7 +71,7 @@ public class Jastify {
 
     private Map<String, String> search(String[] searchWords, String market,
             int limit, String type) {
-        final var url = JastifyUtils.get("spotify.url.api.search");
+        final var url = JastifyUtils.get("api.search");
 
         return JastifyUtils
                 .sendRequestV2(new Request.Builder()
@@ -138,8 +140,7 @@ public class Jastify {
     }
 
     public void startMusic(String deviceId) {
-        final String url =
-            JastifyUtils.get("spotify.url.me.player.startPlayback");
+        final String url = JastifyUtils.get("me.player.startPlayback");
 
         JastifyUtils
                 .sendRequestV2(
@@ -163,7 +164,7 @@ public class Jastify {
      */
     public void setVolume(int volumePercent, SpotifyDevice device) {
 
-        final String url = JastifyUtils.get("spotify.url.me.player.setVolume");
+        final String url = JastifyUtils.get("me.player.setVolume");
 
         JastifyUtils.sendRequestV2(new Request.Builder()
                 .url(HttpUrl.parse(url)
@@ -179,7 +180,7 @@ public class Jastify {
     }
 
     public void playTracks(SpotifyDevice device, List<SpotifyTrack> tracks) {
-        String url = JastifyUtils.get("spotify.url.me.player.startPlayback");
+        String url = JastifyUtils.get("me.player.startPlayback");
 
         List<String> trackIdList = new ArrayList<>();
 
@@ -211,7 +212,7 @@ public class Jastify {
     }
 
     public PlayingItem getNowPlaying() {
-        String url = JastifyUtils.get("spotify.url.me.player.currentlyPlaying");
+        final String url = JastifyUtils.get("me.player.currentlyPlaying");
 
         Request request =
             new Request.Builder()
@@ -227,7 +228,7 @@ public class Jastify {
     }
 
     public UsersPlaylists usersPlaylist(int limit, int offset, String market) {
-        String url = JastifyUtils.get("spotify.url.user.playlists");
+        final String url = JastifyUtils.get("user.playlists");
 
         return setResult(
                 JastifyUtils
@@ -252,7 +253,7 @@ public class Jastify {
      * Refresh the access token.
      */
     public void refreshToken() {
-        final String url = JastifyUtils.get("spotify.url.api.refreshToken");
+        final String url = JastifyUtils.get("api.refreshToken");
 
         final String source =
             new StringBuilder().append(clientID)
@@ -302,7 +303,7 @@ public class Jastify {
      * @return
      */
     public Devices devices() {
-        final String url = JastifyUtils.get("spotify.url.me.player.devices");
+        final String url = JastifyUtils.get("me.player.devices");
 
         return setResult(
                 JastifyUtils.sendRequestV2(new Request.Builder().url(url)
@@ -330,7 +331,7 @@ public class Jastify {
      * @return
      */
     public UsersProfile usersProfile(String userID) {
-        String url = JastifyUtils.get("spotify.url.user", userID);
+        String url = JastifyUtils.get("user", userID);
 
         return setResult(
                 JastifyUtils.sendRequestV2(new Request.Builder().url(url)
@@ -342,8 +343,24 @@ public class Jastify {
 
     }
 
+    public RelatedArtsits relatedArtists(SpotifyArtist artist) {
+        return relatedArtists(artist.getId());
+    }
+
+    public RelatedArtsits relatedArtists(String artistID) {
+        final String url = JastifyUtils.get("artists.relatedArtists", artistID);
+
+        return setResult(
+                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+                        .addHeader("Accept", "application/json")
+                        .addHeader("user_id", userID)
+                        .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
+                        .build()),
+                RelatedArtsits.class);
+    }
+
     //    public Category category() {
-    //        String url = MessageUtil.get("spotify.url.me.player.devices");
+    //        String url = MessageUtil.get("me.player.devices");
     //
     //        Request request =
     //            new Request.Builder().url(url)
