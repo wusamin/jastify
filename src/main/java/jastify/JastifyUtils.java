@@ -1,6 +1,7 @@
 package jastify;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.ResourceBundle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jastify.base.SpotifyResponseBase;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,7 +43,7 @@ public class JastifyUtils {
         return jsonMap;
     }
 
-    protected static Map<String, String> sendRequestV2(Request request) {
+    protected static Map<String, String> sendRequest(Request request) {
         try (Response response =
             new OkHttpClient().newCall(request).execute()) {
             System.out.println("responseCode: " + response.code());
@@ -63,5 +65,30 @@ public class JastifyUtils {
         }
 
         return new HashMap<>();
+    }
+
+    protected static <T extends SpotifyResponseBase> T setResult(
+            Map<String, String> apiResult, Class<T> clazz) {
+
+        T dto = null;
+        try {
+            dto = clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+        dto.setCode(Integer.valueOf(apiResult.get("code")));
+
+        try {
+            dto = new ObjectMapper().readValue(apiResult.get("body"), clazz);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dto;
     }
 }

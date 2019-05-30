@@ -1,7 +1,6 @@
 package jastify;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jastify.base.SpotifyResponseBase;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
 import jastify.dto.RelatedArtsits;
@@ -71,10 +69,10 @@ public class Jastify {
 
     private Map<String, String> search(String[] searchWords, String market,
             int limit, String type) {
-        final var url = JastifyUtils.get("api.search");
+        final String url = JastifyUtils.get("api.search");
 
         return JastifyUtils
-                .sendRequestV2(new Request.Builder()
+                .sendRequest(new Request.Builder()
                         .url(HttpUrl.parse(url)
                                 .newBuilder()
                                 .addEncodedQueryParameter("q",
@@ -90,52 +88,31 @@ public class Jastify {
                         .build());
     }
 
-    private <T extends SpotifyResponseBase> T setResult(
-            Map<String, String> apiResult, Class<T> clazz) {
-
-        T dto = null;
-        try {
-            dto = clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
-        dto.setCode(Integer.valueOf(apiResult.get("code")));
-
-        try {
-            dto = new ObjectMapper().readValue(apiResult.get("body"), clazz);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return dto;
-    }
-
     public SearchResultTracks searchTracks(String[] searchWords, String market,
             int limit) {
-        return setResult(search(searchWords, market, limit, "track"),
+        return JastifyUtils.setResult(
+                search(searchWords, market, limit, "track"),
                 SearchResultTracks.class);
     }
 
     public SearchResultAlbums searchAlbums(String[] searchWords, String market,
             int limit) {
-        return setResult(search(searchWords, market, limit, "album"),
+        return JastifyUtils.setResult(
+                search(searchWords, market, limit, "album"),
                 SearchResultAlbums.class);
     }
 
     public SearchResultArtists searchArtists(String[] searchWords,
             String market, int limit) {
-        return setResult(search(searchWords, market, limit, "artist"),
+        return JastifyUtils.setResult(
+                search(searchWords, market, limit, "artist"),
                 SearchResultArtists.class);
     }
 
     public SearchResultPlaylists searchPlaylists(String[] searchWords,
             String market, int limit) {
-        return setResult(search(searchWords, market, limit, "playlist"),
+        return JastifyUtils.setResult(
+                search(searchWords, market, limit, "playlist"),
                 SearchResultPlaylists.class);
     }
 
@@ -143,7 +120,7 @@ public class Jastify {
         final String url = JastifyUtils.get("me.player.startPlayback");
 
         JastifyUtils
-                .sendRequestV2(
+                .sendRequest(
                         new Request.Builder()
                                 .url(HttpUrl.parse(url)
                                         .newBuilder()
@@ -166,7 +143,7 @@ public class Jastify {
 
         final String url = JastifyUtils.get("me.player.setVolume");
 
-        JastifyUtils.sendRequestV2(new Request.Builder()
+        JastifyUtils.sendRequest(new Request.Builder()
                 .url(HttpUrl.parse(url)
                         .newBuilder()
                         .addEncodedQueryParameter("volume_percent",
@@ -200,7 +177,7 @@ public class Jastify {
         }
 
         JastifyUtils
-                .sendRequestV2(new Request.Builder()
+                .sendRequest(new Request.Builder()
                         .url(HttpUrl.parse(url)
                                 .newBuilder()
                                 .addEncodedQueryParameter("device_id",
@@ -223,16 +200,16 @@ public class Jastify {
                     .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
                     .build();
 
-        return setResult(JastifyUtils.sendRequestV2(request),
+        return JastifyUtils.setResult(JastifyUtils.sendRequest(request),
                 PlayingItem.class);
     }
 
     public UsersPlaylists usersPlaylist(int limit, int offset, String market) {
         final String url = JastifyUtils.get("user.playlists");
 
-        return setResult(
-                JastifyUtils
-                        .sendRequestV2(new Request.Builder()
+        return JastifyUtils
+                .setResult(
+                        JastifyUtils.sendRequest(new Request.Builder()
                                 .url(HttpUrl.parse(url)
                                         .newBuilder()
                                         .addEncodedQueryParameter("market",
@@ -246,7 +223,7 @@ public class Jastify {
                                         TOKEN_PREFIX + token)
 
                                 .build()),
-                UsersPlaylists.class);
+                        UsersPlaylists.class);
     }
 
     /**
@@ -269,7 +246,7 @@ public class Jastify {
 
         Map<String, Object> jsonMap =
             JastifyUtils.parseJsonNest(
-                    JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+                    JastifyUtils.sendRequest(new Request.Builder().url(url)
                             .post(new FormBody.Builder()
                                     .add("grant_type", "refresh_token")
                                     .add("refresh_token", refreshToken)
@@ -305,8 +282,8 @@ public class Jastify {
     public Devices devices() {
         final String url = JastifyUtils.get("me.player.devices");
 
-        return setResult(
-                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+        return JastifyUtils.setResult(
+                JastifyUtils.sendRequest(new Request.Builder().url(url)
                         .addHeader("Accept", "application/json")
                         .addHeader("Content-Type", "application/json")
                         .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
@@ -333,8 +310,8 @@ public class Jastify {
     public UsersProfile usersProfile(String userID) {
         String url = JastifyUtils.get("user", userID);
 
-        return setResult(
-                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+        return JastifyUtils.setResult(
+                JastifyUtils.sendRequest(new Request.Builder().url(url)
                         .addHeader("Accept", "application/json")
                         .addHeader("user_id", userID)
                         .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
@@ -350,8 +327,8 @@ public class Jastify {
     public RelatedArtsits relatedArtists(String artistID) {
         final String url = JastifyUtils.get("artists.relatedArtists", artistID);
 
-        return setResult(
-                JastifyUtils.sendRequestV2(new Request.Builder().url(url)
+        return JastifyUtils.setResult(
+                JastifyUtils.sendRequest(new Request.Builder().url(url)
                         .addHeader("Accept", "application/json")
                         .addHeader("user_id", userID)
                         .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
@@ -369,7 +346,7 @@ public class Jastify {
     //                    .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
     //                    .build();
     //
-    //        Map<String, String> map = sendRequestV2(request);
+    //        Map<String, String> map = sendRequest(request);
     //
     //        ObjectMapper mapper = new ObjectMapper();
     //        Devices t = new Devices();
