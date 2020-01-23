@@ -68,7 +68,7 @@ public class Jastify {
         MediaType.parse("application/json; charset=utf-8");
 
     private Map<String, String> search(String[] searchWords, String market,
-            int limit, String type) {
+            int limit, int offset, String type) {
         final String url = JastifyUtils.get("api.search");
 
         return JastifyUtils
@@ -83,36 +83,38 @@ public class Jastify {
                                 .addEncodedQueryParameter("market", market)
                                 .addEncodedQueryParameter("limit",
                                         String.valueOf(limit))
+                                .addEncodedQueryParameter("offset",
+                                        String.valueOf(offset))
                                 .build())
                         .addHeader(TOKEN_KEY, TOKEN_PREFIX + token)
                         .build());
     }
 
     public SearchResultTracks searchTracks(String[] searchWords, String market,
-            int limit) {
+            int limit, int offset) {
         return JastifyUtils.setResult(
-                search(searchWords, market, limit, "track"),
+                search(searchWords, market, limit, offset, "track"),
                 SearchResultTracks.class);
     }
 
     public SearchResultAlbums searchAlbums(String[] searchWords, String market,
-            int limit) {
+            int limit, int offset) {
         return JastifyUtils.setResult(
-                search(searchWords, market, limit, "album"),
+                search(searchWords, market, limit, offset, "album"),
                 SearchResultAlbums.class);
     }
 
     public SearchResultArtists searchArtists(String[] searchWords,
-            String market, int limit) {
+            String market, int limit, int offset) {
         return JastifyUtils.setResult(
-                search(searchWords, market, limit, "artist"),
+                search(searchWords, market, limit, offset, "artist"),
                 SearchResultArtists.class);
     }
 
     public SearchResultPlaylists searchPlaylists(String[] searchWords,
-            String market, int limit) {
+            String market, int limit, int offset) {
         return JastifyUtils.setResult(
-                search(searchWords, market, limit, "playlist"),
+                search(searchWords, market, limit, offset, "playlist"),
                 SearchResultPlaylists.class);
     }
 
@@ -172,7 +174,6 @@ public class Jastify {
         try {
             test = new ObjectMapper().writeValueAsString(map);
         } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
             e.printStackTrace();
         }
 
@@ -355,7 +356,7 @@ public class Jastify {
     //        try {
     //            t = mapper.readValue(map.get("body"), Devices.class);
     //        } catch (IOException e) {
-    //            // TODO 自動生成された catch ブロック
+    //            // TODO 閾ｪ蜍慕函謌舌＆繧後◆ catch 繝悶Ο繝�繧ｯ
     //            e.printStackTrace();
     //        }
     //
