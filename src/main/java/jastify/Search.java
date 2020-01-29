@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jastify.common.Const;
 import jastify.dto.SearchResultAlbums;
 import jastify.dto.SearchResultArtists;
 import jastify.dto.SearchResultPlaylists;

@@ -1,5 +1,6 @@
 package jastify;
 
+import jastify.common.Const;
 import jastify.dto.SpotifyDevice;
 import lombok.Setter;
 import okhttp3.HttpUrl;
