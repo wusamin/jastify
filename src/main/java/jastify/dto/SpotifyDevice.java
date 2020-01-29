@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jastify.base.SpotifyResponseBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SpotifyDevice extends SpotifyResponseBase {
     private String id;
 

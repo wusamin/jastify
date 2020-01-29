@@ -4,8 +4,10 @@ import java.util.List;
 
 import jastify.base.SpotifyResponseBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UsersPlaylists extends SpotifyResponseBase {
     private String href;
 

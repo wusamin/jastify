@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jastify.base.SpotifyResponseBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class UsersProfile extends SpotifyResponseBase {
     @JsonProperty("display_name")
     private String displayName;
