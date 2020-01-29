@@ -48,6 +48,8 @@ public class Jastify {
 
     private Search search;
 
+    private Player player;
+
     private Jastify() {
     }
 
@@ -60,10 +62,12 @@ public class Jastify {
         this.userID = builder.userID;
 
         search = new Search(token);
+        player = new Player(token);
     }
 
     private void distributeToken(String token) {
         search.setToken(token);
+        player.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -122,20 +126,7 @@ public class Jastify {
      * @return
      */
     public void setVolume(int volumePercent, SpotifyDevice device) {
-
-        final String url = JastifyUtils.get("me.player.setVolume");
-
-        JastifyUtils.sendRequest(new Request.Builder()
-                .url(HttpUrl.parse(url)
-                        .newBuilder()
-                        .addEncodedQueryParameter("volume_percent",
-                                String.valueOf(volumePercent))
-                        .addEncodedQueryParameter("device_id", device.getId())
-                        .build())
-                .put(RequestBody.create(null, new byte[] {}))
-                .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
-                .build());
-
+        player.setVolume(volumePercent, device);
     }
 
     /**
@@ -311,7 +302,6 @@ public class Jastify {
                         .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
                         .build()),
                 UsersProfile.class);
-
     }
 
     public RelatedArtsits relatedArtists(SpotifyArtist artist) {
