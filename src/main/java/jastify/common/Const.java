@@ -1,4 +1,4 @@
-package jastify;
+package jastify.common;
 
 import okhttp3.MediaType;
 
