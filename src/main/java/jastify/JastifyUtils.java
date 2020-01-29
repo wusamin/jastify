@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jastify.base.SpotifyResponseBase;
+import jastify.dto.base.SpotifyResponseBase;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

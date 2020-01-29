@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jastify.base.SpotifyResponseBase;
+import jastify.dto.base.SpotifyResponseBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

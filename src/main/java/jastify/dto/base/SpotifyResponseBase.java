@@ -1,4 +1,4 @@
-package jastify.base;
+package jastify.dto.base;
 
 import lombok.Data;
 
