@@ -8,10 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class SpotifyTrack {
-    private SpotifyAlbum album;
+public class Track {
+    private AlbumSimplified album;
 
-    private List<SpotifyArtist> artists;
+    private List<ArtistSimplified> artists;
+
+    @JsonProperty("available_markets")
+    private List<String> availableMarkets;
 
     @JsonProperty("disc_number")
     private int discNumber;
@@ -25,7 +28,7 @@ public class SpotifyTrack {
     private Map<String, String> externalIds;
 
     @JsonProperty("external_urls")
-    private SpotifyExternalUrl externalUrls;
+    private ExternalUrl externalUrls;
 
     private String href;
 
@@ -38,7 +41,7 @@ public class SpotifyTrack {
     private boolean isPlayable;
 
     @JsonProperty("linked_from")
-    private SpotifyLinkedForm linkedForm;
+    private LinkedForm linkedForm;
 
     private String name;
 

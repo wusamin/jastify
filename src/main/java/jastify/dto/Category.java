@@ -8,7 +8,7 @@ import lombok.Data;
 public class Category {
     private String href;
 
-    private List<SpotifyIcon> icons;
+    private List<Icon> icons;
 
     private String id;
 

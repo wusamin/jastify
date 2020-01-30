@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 public class UsersPlaylists extends SpotifyResponseBase {
     private String href;
 
-    private List<SpotifyPlaylist> items;
+    private List<PlaylistSimplified> items;
 
     private int limit;
 

@@ -8,7 +8,7 @@ import lombok.Data;
 public class SpotifySearchTracks {
     private String href;
 
-    private List<SpotifyTrack> items;
+    private List<Track> items;
 
     private int limit;
 

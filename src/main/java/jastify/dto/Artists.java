@@ -5,10 +5,10 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SpotifySearchArtist {
+public class Artists {
     private String href;
 
-    private List<SpotifyResultArtist> items;
+    private List<Artist> items;
 
     private int limit;
 

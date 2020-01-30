@@ -2,13 +2,14 @@ package jastify.dto;
 
 import java.util.List;
 
+import jastify.dto.base.SpotifyResponseBase;
 import lombok.Data;
 
 @Data
-public class SpotifySearchAlbums {
+public class SpotifySearchAlbums extends SpotifyResponseBase {
     private String href;
 
-    private List<SpotifyAlbum> items;
+    private List<AlbumSimplified> items;
 
     private int limit;
 

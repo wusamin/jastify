@@ -7,21 +7,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class SpotifyPlaylist {
+public class PlaylistSimplified {
     private boolean collaborative;
 
+    private String description;
+
     @JsonProperty("external_urls")
-    private SpotifyExternalUrl externalUrls;
+    private ExternalUrl externalUrls;
 
     private String href;
 
     private String id;
 
-    private List<SpotifyImage> images;
+    private List<Image> images;
 
     private String name;
 
-    private SpotifyOwner owner;
+    private Owner owner;
 
     @JsonProperty("primary_color")
     private String primaryColor;
@@ -32,7 +34,7 @@ public class SpotifyPlaylist {
     @JsonProperty("snapshot_id")
     private String snapshotId;
 
-    private SpotifyPlaylistTracks tracks;
+    private PlaylistTracks tracks;
 
     private String type;
 

@@ -5,6 +5,6 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public class SpotifyAction {
+public class Action {
     private Map<String, Boolean> disallows;
 }

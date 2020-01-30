@@ -7,5 +7,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SearchResultArtists extends SpotifyResponseBase {
-    private SpotifySearchArtist artists;
+    private Artists artists;
 }

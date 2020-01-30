@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class SpotifyLinkedForm {
+public class Owner {
+
+    @JsonProperty("display_name")
+    private String displayName;
 
     @JsonProperty("external_urls")
-    private SpotifyExternalUrl externalUrls;
+    private ExternalUrl externalUrls;
 
     private String href;
 

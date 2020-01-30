@@ -11,17 +11,17 @@ import lombok.EqualsAndHashCode;
 public class PlayingItem extends SpotifyResponseBase {
     private String timestamp;
 
-    private SpotifyContext context;
+    private Context context;
 
     @JsonProperty("progress_ms")
     private int progressMs;
 
-    private SpotifyTrack item;
+    private Track item;
 
     @JsonProperty("currently_playing_type")
     private String currentlyPlayingType;
 
-    private SpotifyAction actions;
+    private Action actions;
 
     @JsonProperty("is_playing")
     private boolean isPlaying;

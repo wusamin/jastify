@@ -3,7 +3,7 @@ package jastify.dto;
 import lombok.Data;
 
 @Data
-public class SpotifyIcon {
+public class Icon {
 
     int height;
 

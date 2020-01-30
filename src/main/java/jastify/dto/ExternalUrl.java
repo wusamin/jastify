@@ -3,6 +3,6 @@ package jastify.dto;
 import lombok.Data;
 
 @Data
-public class SpotifyExternalUrl {
+public class ExternalUrl {
     private String spotify;
 }

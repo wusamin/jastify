@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SpotifyDevice extends SpotifyResponseBase {
+public class Device extends SpotifyResponseBase {
     private String id;
 
     @JsonProperty("is_active")

@@ -15,15 +15,15 @@ public class UsersProfile extends SpotifyResponseBase {
     private String displayName;
 
     @JsonProperty("external_urls")
-    private SpotifyExternalUrl externalUrls;
+    private ExternalUrl externalUrls;
 
-    private SpotifyFollowers followers;
+    private Followers followers;
 
     private String href;
 
     private String id;
 
-    private List<SpotifyImage> images;
+    private List<Image> images;
 
     private String type;
 

@@ -8,20 +8,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class SpotifyAlbum {
+public class Album {
     @JsonProperty("album_type")
     private String albumType;
 
-    private List<SpotifyArtist> artists;
+    private List<ArtistSimplified> artists;
 
     @JsonProperty("external_urls")
-    private SpotifyExternalUrl externalUrls;
+    private ExternalUrl externalUrls;
 
     private String href;
 
     private String id;
 
-    private List<SpotifyImage> images;
+    private List<Image> images;
 
     private String name;
 

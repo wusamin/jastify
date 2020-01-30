@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Devices extends SpotifyResponseBase {
-    private List<SpotifyDevice> devices;
+    private List<Device> devices;
 }
