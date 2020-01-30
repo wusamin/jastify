@@ -13,11 +13,11 @@ import lombok.Setter;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 
-public class Search {
+public class SearchService {
     @Setter
     private String token;
 
-    public Search(String token) {
+    public SearchService(String token) {
         this.token = token;
     }
 

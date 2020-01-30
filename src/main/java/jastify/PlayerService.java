@@ -1,22 +1,22 @@
 package jastify;
 
 import jastify.common.Const;
-import jastify.dto.SpotifyDevice;
+import jastify.dto.Device;
 import lombok.Setter;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class Player {
+public class PlayerService {
 
     @Setter
     private String token;
 
-    public Player(String token) {
+    public PlayerService(String token) {
         this.token = token;
     }
 
-    public void setVolume(int volumePercent, SpotifyDevice device) {
+    public void setVolume(int volumePercent, Device device) {
 
         final String url = JastifyUtils.get("me.player.setVolume");
 
