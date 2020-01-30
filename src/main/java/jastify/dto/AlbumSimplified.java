@@ -2,6 +2,7 @@ package jastify.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,6 +37,8 @@ public class AlbumSimplified {
 
     @JsonProperty("release_date_precision")
     private String releaseDatePrecision;
+
+    private Map<String, String> restrictions;
 
     @JsonProperty("total_tracks")
     private int totalTracks;

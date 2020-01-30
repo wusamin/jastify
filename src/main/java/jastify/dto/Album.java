@@ -2,6 +2,7 @@ package jastify.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,8 +15,18 @@ public class Album {
 
     private List<ArtistSimplified> artists;
 
+    @JsonProperty("available_markets")
+    private List<String> availableMarkets;
+
+    private List<Copyright> copyrights;
+
+    @JsonProperty("external_ids")
+    private Map<String, String> externalIds;
+
     @JsonProperty("external_urls")
     private ExternalUrl externalUrls;
+
+    private List<String> genres;
 
     private String href;
 
@@ -23,13 +34,19 @@ public class Album {
 
     private List<Image> images;
 
+    private String label;
+
     private String name;
+
+    private int popularity;
 
     @JsonProperty("release_date")
     private Date releaseDate;
 
     @JsonProperty("release_date_precision")
     private String releaseDatePrecision;
+
+    private SpotifySearchTracks tracks;
 
     @JsonProperty("total_tracks")
     private int totalTracks;
