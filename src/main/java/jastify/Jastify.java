@@ -13,7 +13,10 @@ import java.util.ResourceBundle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jastify.common.Const;
+import jastify.dto.Artist;
+import jastify.dto.ArtistSimplified;
 import jastify.dto.Category;
+import jastify.dto.Device;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
 import jastify.dto.RelatedArtsits;
@@ -21,9 +24,8 @@ import jastify.dto.SearchResultAlbums;
 import jastify.dto.SearchResultArtists;
 import jastify.dto.SearchResultPlaylists;
 import jastify.dto.SearchResultTracks;
-import jastify.dto.SpotifyArtist;
-import jastify.dto.SpotifyDevice;
-import jastify.dto.SpotifyTrack;
+import jastify.dto.SpotifySearchAlbums;
+import jastify.dto.Track;
 import jastify.dto.UsersPlaylists;
 import jastify.dto.UsersProfile;
 import lombok.Getter;
@@ -47,9 +49,11 @@ public class Jastify {
 
     private String userID;
 
-    private Search search;
+    private SearchService search;
 
-    private Player player;
+    private PlayerService player;
+
+    private ArtistsService artsits;
 
     private Jastify() {
     }
@@ -62,13 +66,15 @@ public class Jastify {
         this.clientSecret = builder.clientSecret;
         this.userID = builder.userID;
 
-        search = new Search(token);
-        player = new Player(token);
+        search = new SearchService(token);
+        player = new PlayerService(token);
+        artsits = new ArtistsService(token);
     }
 
     private void distributeToken(String token) {
         search.setToken(token);
         player.setToken(token);
+        artsits.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -126,7 +132,7 @@ public class Jastify {
      * @param device
      * @return
      */
-    public void setVolume(int volumePercent, SpotifyDevice device) {
+    public void setVolume(int volumePercent, Device device) {
         player.setVolume(volumePercent, device);
     }
 
@@ -136,7 +142,7 @@ public class Jastify {
      * @param device
      * @param tracks
      */
-    public void playTracks(SpotifyDevice device, List<SpotifyTrack> tracks) {
+    public void playTracks(Device device, List<Track> tracks) {
         String url = JastifyUtils.get("me.player.startPlayback");
 
         List<String> trackIdList = new ArrayList<>();
@@ -251,13 +257,13 @@ public class Jastify {
      * @param deviceName
      * @return
      */
-    public SpotifyDevice device(String deviceName) {
-        for (SpotifyDevice device : devices().getDevices()) {
+    public Device device(String deviceName) {
+        for (Device device : devices().getDevices()) {
             if (device.getName().equals(deviceName)) {
                 return device;
             }
         }
-        return new SpotifyDevice();
+        return new Device();
     }
 
     /**
@@ -305,7 +311,19 @@ public class Jastify {
                 UsersProfile.class);
     }
 
-    public RelatedArtsits relatedArtists(SpotifyArtist artist) {
+    public SpotifySearchAlbums getArtistsAlbums(ArtistSimplified artist,
+            String[] include_groups, String country, int limit, int offset) {
+        return artsits.getArtistsAlbums(artist
+                .getId(), include_groups, country, limit, offset);
+    }
+
+    public SpotifySearchAlbums getArtistsAlbums(Artist artist,
+            String[] include_groups, String country, int limit, int offset) {
+        return artsits.getArtistsAlbums(artist
+                .getId(), include_groups, country, limit, offset);
+    }
+
+    public RelatedArtsits relatedArtists(ArtistSimplified artist) {
         return relatedArtists(artist.getId());
     }
 
