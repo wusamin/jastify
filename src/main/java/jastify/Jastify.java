@@ -118,20 +118,7 @@ public class Jastify {
      * @param deviceId
      */
     public void startMusic(String deviceId) {
-        final String url = JastifyUtils.get("me.player.startPlayback");
-
-        JastifyUtils
-                .sendRequest(
-                        new Request.Builder()
-                                .url(HttpUrl.parse(url)
-                                        .newBuilder()
-                                        .addEncodedQueryParameter("device_id",
-                                                deviceId)
-                                        .build())
-                                .put(new FormBody.Builder().build())
-                                .addHeader(Const.TOKEN_KEY,
-                                        Const.TOKEN_PREFIX + token)
-                                .build());
+        player.startMusic(deviceId);
     }
 
     /**
@@ -228,7 +215,7 @@ public class Jastify {
     /**
      * Refresh the access token.
      */
-    public void refreshToken() {
+    public String refreshToken() {
         final String url = JastifyUtils.get("api.refreshToken");
 
         final String source =
@@ -258,6 +245,8 @@ public class Jastify {
         token = jsonMap.get("access_token").toString();
 
         distributeToken(token);
+
+        return token;
     }
 
     /**
@@ -281,16 +270,7 @@ public class Jastify {
      * @return
      */
     public Devices devices() {
-        final String url = JastifyUtils.get("me.player.devices");
-
-        return JastifyUtils.setResult(
-                JastifyUtils.sendRequest(new Request.Builder().url(url)
-                        .addHeader("Accept", "application/json")
-                        .addHeader("Content-Type", "application/json")
-                        .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
-                        .build()),
-                Devices.class);
-
+        return player.devices();
     }
 
     /**
@@ -407,15 +387,7 @@ public class Jastify {
     }
 
     public RelatedArtsits relatedArtists(String artistID) {
-        final String url = JastifyUtils.get("artists.relatedArtists", artistID);
-
-        return JastifyUtils.setResult(
-                JastifyUtils.sendRequest(new Request.Builder().url(url)
-                        .addHeader("Accept", "application/json")
-                        .addHeader("user_id", userID)
-                        .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
-                        .build()),
-                RelatedArtsits.class);
+        return artsits.relatedArtists(artistID);
     }
 
     public Category category() {
@@ -513,8 +485,7 @@ public class Jastify {
                             ResourceBundle.Control.getControl(
                                     ResourceBundle.Control.FORMAT_DEFAULT));
             } catch (MissingResourceException e) {
-                e.printStackTrace();
-                //                throw new RuntimeErrorException(null, e.getMessage());
+                throw new RuntimeException(e);
             }
             token(bundle.getString("spotify.token"))
                     .refreshToken(bundle.getString("spotify.refreshToken"))

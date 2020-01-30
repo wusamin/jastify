@@ -18,6 +18,13 @@ public class AlbumsService {
         this.token = token;
     }
 
+    /**
+     * GET https://api.spotify.com/v1/albums
+     * 
+     * @param ids
+     * @param market
+     * @return
+     */
     protected AlbumList getAlbums(String[] ids, String market) {
         final String url = JastifyUtils.get("album.getSeveralAlbums");
         return JastifyUtils

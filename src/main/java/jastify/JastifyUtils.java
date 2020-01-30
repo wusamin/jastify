@@ -38,7 +38,7 @@ public class JastifyUtils {
             jsonMap = new ObjectMapper().readValue(json, reference);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return jsonMap;
     }
@@ -61,7 +61,7 @@ public class JastifyUtils {
                 return map;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return new HashMap<>();
@@ -76,8 +76,7 @@ public class JastifyUtils {
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            throw new RuntimeException(e1);
         }
 
         dto.setCode(Integer.valueOf(apiResult.get("code")));

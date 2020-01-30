@@ -21,6 +21,16 @@ public class SearchService {
         this.token = token;
     }
 
+    /**
+     * GET https://api.spotify.com/v1/search
+     * 
+     * @param searchWords
+     * @param market
+     * @param limit
+     * @param offset
+     * @param type
+     * @return
+     */
     protected Map<String, String> search(String[] searchWords, String market,
             int limit, int offset, String type) {
         final String url = JastifyUtils.get("api.search");
