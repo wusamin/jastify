@@ -3,6 +3,7 @@ package jastify;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.ResourceBundle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jastify.common.Const;
+import jastify.common.JastifyEnums.IncludeGroups;
+import jastify.dto.Album;
+import jastify.dto.AlbumList;
+import jastify.dto.AlbumSimplified;
 import jastify.dto.Artist;
 import jastify.dto.ArtistSimplified;
 import jastify.dto.Category;
@@ -55,6 +60,8 @@ public class Jastify {
 
     private ArtistsService artsits;
 
+    private AlbumsService album;
+
     private Jastify() {
     }
 
@@ -69,12 +76,14 @@ public class Jastify {
         search = new SearchService(token);
         player = new PlayerService(token);
         artsits = new ArtistsService(token);
+        album = new AlbumsService(token);
     }
 
     private void distributeToken(String token) {
         search.setToken(token);
         player.setToken(token);
         artsits.setToken(token);
+        album.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -311,16 +320,86 @@ public class Jastify {
                 UsersProfile.class);
     }
 
-    public SpotifySearchAlbums getArtistsAlbums(ArtistSimplified artist,
-            String[] include_groups, String country, int limit, int offset) {
-        return artsits.getArtistsAlbums(artist
-                .getId(), include_groups, country, limit, offset);
+    /**
+     * get albums infomation specieid ids.
+     * 
+     * @param ids
+     * @param market
+     * @return
+     */
+    public AlbumList getAlbums(String[] ids, String market) {
+        return album.getAlbums(ids, market);
     }
 
-    public SpotifySearchAlbums getArtistsAlbums(Artist artist,
-            String[] include_groups, String country, int limit, int offset) {
+    /**
+     * get albums infomation specieid albums.
+     * 
+     * @param albums
+     * @param market
+     * @return
+     */
+    public AlbumList getAlbums(Album[] albums, String market) {
+        String[] ids =
+            Arrays.stream(albums).map(Album::getId).toArray(String[]::new);
+        return album.getAlbums(ids, market);
+    }
+
+    /**
+     * get albums infomation specieid albums.
+     * 
+     * @param albums
+     * @param market
+     * @return
+     */
+    public AlbumList getAlbums(AlbumSimplified[] albums, String market) {
+        String[] ids =
+            Arrays.stream(albums)
+                    .map(AlbumSimplified::getId)
+                    .toArray(String[]::new);
+        return album.getAlbums(ids, market);
+    }
+
+    /**
+     * get album list specified artist,
+     * 
+     * @param artist
+     * @param includeGroups
+     * @param country
+     * @param limit
+     * @param offset
+     * @return
+     */
+    public SpotifySearchAlbums getArtistsAlbums(ArtistSimplified artist,
+            IncludeGroups[] includeGroups, String country, int limit,
+            int offset) {
+        String[] array =
+            Arrays.stream(includeGroups)
+                    .map(IncludeGroups::getName)
+                    .toArray(String[]::new);
         return artsits.getArtistsAlbums(artist
-                .getId(), include_groups, country, limit, offset);
+                .getId(), array, country, limit, offset);
+    }
+
+    /**
+     * get album list specified artist,
+     * 
+     * @param artist
+     * @param includeGroups
+     * @param country
+     * @param limit
+     * @param offset
+     * @return
+     */
+    public SpotifySearchAlbums getArtistsAlbums(Artist artist,
+            IncludeGroups[] includeGroups, String country, int limit,
+            int offset) {
+        String[] array =
+            Arrays.stream(includeGroups)
+                    .map(IncludeGroups::getName)
+                    .toArray(String[]::new);
+
+        return artsits.getArtistsAlbums(artist
+                .getId(), array, country, limit, offset);
     }
 
     public RelatedArtsits relatedArtists(ArtistSimplified artist) {
@@ -358,7 +437,6 @@ public class Jastify {
         try {
             t = mapper.readValue(map.get("body"), Category.class);
         } catch (IOException e) {
-            // TODO 閾ｪ蜍慕函謌舌＆繧後◆ catch 繝悶Ο繝�繧ｯ
             e.printStackTrace();
         }
 

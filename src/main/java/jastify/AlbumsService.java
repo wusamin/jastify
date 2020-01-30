@@ -20,7 +20,6 @@ public class AlbumsService {
 
     protected AlbumList getAlbums(String[] ids, String market) {
         final String url = JastifyUtils.get("album.getSeveralAlbums");
-
         return JastifyUtils
                 .setResult(JastifyUtils.sendRequest(new Request.Builder()
                         .url(HttpUrl.parse(url)
