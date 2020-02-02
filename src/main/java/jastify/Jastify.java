@@ -24,6 +24,7 @@ import jastify.dto.Category;
 import jastify.dto.Device;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
+import jastify.dto.RecommendationsResponse;
 import jastify.dto.RelatedArtsits;
 import jastify.dto.SearchResultAlbums;
 import jastify.dto.SearchResultArtists;
@@ -33,6 +34,7 @@ import jastify.dto.SpotifySearchAlbums;
 import jastify.dto.Track;
 import jastify.dto.UsersPlaylists;
 import jastify.dto.UsersProfile;
+import jastify.parameter.TuneableTrack;
 import lombok.Getter;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -62,6 +64,8 @@ public class Jastify {
 
     private AlbumsService album;
 
+    private BrowseService browse;
+
     private Jastify() {
     }
 
@@ -77,6 +81,7 @@ public class Jastify {
         player = new PlayerService(token);
         artsits = new ArtistsService(token);
         album = new AlbumsService(token);
+        browse = new BrowseService(token);
     }
 
     private void distributeToken(String token) {
@@ -84,6 +89,7 @@ public class Jastify {
         player.setToken(token);
         artsits.setToken(token);
         album.setToken(token);
+        browse.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -388,6 +394,20 @@ public class Jastify {
 
     public RelatedArtsits relatedArtists(String artistID) {
         return artsits.relatedArtists(artistID);
+    }
+
+    public RecommendationsResponse getRecommendations(String market,
+            String[] seedTracks, String[] seedArtists, String[] seedGenres,
+            TuneableTrack target, TuneableTrack max, TuneableTrack min,
+            int limit) {
+        return browse.getRecommendeations(market,
+                seedTracks,
+                seedArtists,
+                seedGenres,
+                target,
+                max,
+                min,
+                limit);
     }
 
     public Category category() {
