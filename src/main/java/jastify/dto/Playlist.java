@@ -39,7 +39,7 @@ public class Playlist extends SpotifyResponseBase {
     @JsonProperty("snapshot_id")
     private String snapshotId;
 
-    private PlaylistTracks tracks;
+    private SpotifySearchTracks tracks;
 
     private String type;
 

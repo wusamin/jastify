@@ -24,6 +24,7 @@ import jastify.dto.Category;
 import jastify.dto.Device;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
+import jastify.dto.Playlist;
 import jastify.dto.RecommendationsResponse;
 import jastify.dto.RelatedArtsits;
 import jastify.dto.SearchResultAlbums;
@@ -36,6 +37,7 @@ import jastify.dto.UsersPlaylists;
 import jastify.dto.UsersProfile;
 import jastify.parameter.TuneableTrack;
 import lombok.Getter;
+import lombok.Setter;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -43,6 +45,9 @@ import okhttp3.RequestBody;
 
 @Getter
 public class Jastify {
+
+    @Setter
+    private boolean debug = false;
 
     private String token;
 
@@ -66,6 +71,8 @@ public class Jastify {
 
     private BrowseService browse;
 
+    private PlaylistService playlist;
+
     private Jastify() {
     }
 
@@ -82,6 +89,7 @@ public class Jastify {
         artsits = new ArtistsService(token);
         album = new AlbumsService(token);
         browse = new BrowseService(token);
+        playlist = new PlaylistService(token);
     }
 
     private void distributeToken(String token) {
@@ -90,6 +98,7 @@ public class Jastify {
         artsits.setToken(token);
         album.setToken(token);
         browse.setToken(token);
+        playlist.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -160,7 +169,8 @@ public class Jastify {
         try {
             test = new ObjectMapper().writeValueAsString(map);
         } catch (IOException e) {
-            e.printStackTrace();
+            //            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         JastifyUtils
@@ -304,6 +314,25 @@ public class Jastify {
                         .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
                         .build()),
                 UsersProfile.class);
+    }
+
+    /**
+     * create a playlist.
+     * 
+     * @param userId
+     * @param name
+     * @param isPublic
+     * @param collaborative
+     * @param description
+     * @return
+     */
+    public Playlist createPlayList(String userId, String name, boolean isPublic,
+            boolean collaborative, String description) {
+        return playlist.createPlayList(userId,
+                name,
+                isPublic,
+                collaborative,
+                description);
     }
 
     /**
