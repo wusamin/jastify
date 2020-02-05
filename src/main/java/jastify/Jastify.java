@@ -31,6 +31,7 @@ import jastify.dto.SearchResultAlbums;
 import jastify.dto.SearchResultArtists;
 import jastify.dto.SearchResultPlaylists;
 import jastify.dto.SearchResultTracks;
+import jastify.dto.Snapshot;
 import jastify.dto.SpotifySearchAlbums;
 import jastify.dto.Track;
 import jastify.dto.UsersPlaylists;
@@ -314,6 +315,11 @@ public class Jastify {
                         .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
                         .build()),
                 UsersProfile.class);
+    }
+
+    public Snapshot addTracksToPlaylist(String playlistId, String[] tracks,
+            int position) {
+        return playlist.addTracksToPlaylist(playlistId, tracks, position);
     }
 
     /**
