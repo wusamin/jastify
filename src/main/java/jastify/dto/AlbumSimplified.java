@@ -1,6 +1,5 @@
 package jastify.dto;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class AlbumSimplified {
     private String name;
 
     @JsonProperty("release_date")
-    private Date releaseDate;
+    private String releaseDate;
 
     @JsonProperty("release_date_precision")
     private String releaseDatePrecision;
