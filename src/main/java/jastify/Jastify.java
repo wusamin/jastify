@@ -386,6 +386,17 @@ public class Jastify {
     }
 
     /**
+     * remove tracks from playlist.
+     * 
+     * @param playlistId
+     * @param tracks
+     * @return
+     */
+    public Snapshot removeTracks(String playlistId, String[] tracks) {
+        return playlist.deleteTracks(playlistId, tracks);
+    }
+
+    /**
      * get albums infomation specified ids.
      * 
      * @param ids

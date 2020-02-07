@@ -3,7 +3,9 @@ package jastify;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -103,5 +105,43 @@ public class PlaylistService {
 
                         .build()),
                 Playlist.class);
+    }
+
+    /**
+     * DELETE https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+     * 
+     * @param playlistId
+     * @param tracks
+     * @return
+     */
+    public Snapshot deleteTracks(String playlistId, String[] tracks) {
+        final String url =
+            JastifyUtils.get("playlists.removeTracks", playlistId);
+
+        List<Map<String, String>> spotifiedTracks =
+            Arrays.stream(tracks).map(p -> {
+                Map<String, String> m = new HashMap<>();
+                m.put("uri", "spotify:track:" + p);
+                return m;
+            }).collect(Collectors.toList());
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("tracks", spotifiedTracks);
+
+        String rb = null;
+
+        try {
+            rb = new ObjectMapper().writeValueAsString(map);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return JastifyUtils.setResult(
+                JastifyUtils.sendRequest(new Request.Builder().url(url)
+                        .delete(RequestBody.create(Const.JSON, rb))
+                        .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
+                        .addHeader("Content-Type", "application/json")
+                        .build()),
+                Snapshot.class);
     }
 }
