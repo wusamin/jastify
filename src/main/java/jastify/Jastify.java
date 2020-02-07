@@ -108,21 +108,57 @@ public class Jastify {
 
     }
 
+    /**
+     * search tracks.
+     * 
+     * @param searchWords
+     * @param market
+     * @param limit
+     * @param offset
+     * @return
+     */
     public SearchResultTracks searchTracks(String[] searchWords, String market,
             int limit, int offset) {
         return search.searchTracks(searchWords, market, limit, offset);
     }
 
+    /**
+     * search albums.
+     * 
+     * @param searchWords
+     * @param market
+     * @param limit
+     * @param offset
+     * @return
+     */
     public SearchResultAlbums searchAlbums(String[] searchWords, String market,
             int limit, int offset) {
         return search.searchAlbums(searchWords, market, limit, offset);
     }
 
+    /**
+     * search artists.
+     * 
+     * @param searchWords
+     * @param market
+     * @param limit
+     * @param offset
+     * @return
+     */
     public SearchResultArtists searchArtists(String[] searchWords,
             String market, int limit, int offset) {
         return search.searchArtists(searchWords, market, limit, offset);
     }
 
+    /**
+     * search playlists.
+     * 
+     * @param searchWords
+     * @param market
+     * @param limit
+     * @param offset
+     * @return
+     */
     public SearchResultPlaylists searchPlaylists(String[] searchWords,
             String market, int limit, int offset) {
         return search.searchPlaylists(searchWords, market, limit, offset);
@@ -317,6 +353,14 @@ public class Jastify {
                 UsersProfile.class);
     }
 
+    /**
+     * add tracks to playlist.
+     * 
+     * @param playlistId
+     * @param tracks
+     * @param position
+     * @return
+     */
     public Snapshot addTracksToPlaylist(String playlistId, String[] tracks,
             int position) {
         return playlist.addTracksToPlaylist(playlistId, tracks, position);
@@ -342,7 +386,7 @@ public class Jastify {
     }
 
     /**
-     * get albums infomation specieid ids.
+     * get albums infomation specified ids.
      * 
      * @param ids
      * @param market
@@ -353,7 +397,7 @@ public class Jastify {
     }
 
     /**
-     * get albums infomation specieid albums.
+     * get albums infomation specified albums.
      * 
      * @param albums
      * @param market
@@ -366,7 +410,7 @@ public class Jastify {
     }
 
     /**
-     * get albums infomation specieid albums.
+     * get albums infomation specified albums.
      * 
      * @param albums
      * @param market
@@ -423,14 +467,39 @@ public class Jastify {
                 .getId(), array, country, limit, offset);
     }
 
+    /**
+     * get artists related for artist.
+     * 
+     * @param artist
+     * @return
+     */
     public RelatedArtsits relatedArtists(ArtistSimplified artist) {
         return relatedArtists(artist.getId());
     }
 
+    /**
+     * get artists related for artist.
+     * 
+     * @param artist
+     * @return
+     */
     public RelatedArtsits relatedArtists(String artistID) {
         return artsits.relatedArtists(artistID);
     }
 
+    /**
+     * get recomendations.
+     * 
+     * @param market
+     * @param seedTracks
+     * @param seedArtists
+     * @param seedGenres
+     * @param target
+     * @param max
+     * @param min
+     * @param limit
+     * @return
+     */
     public RecommendationsResponse getRecommendations(String market,
             String[] seedTracks, String[] seedArtists, String[] seedGenres,
             TuneableTrack target, TuneableTrack max, TuneableTrack min,

@@ -23,6 +23,14 @@ public class PlaylistService {
         this.token = token;
     }
 
+    /**
+     * POST https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+     * 
+     * @param playlistId
+     * @param tracks
+     * @param position
+     * @return
+     */
     public Snapshot addTracksToPlaylist(String playlistId, String[] tracks,
             int position) {
 
