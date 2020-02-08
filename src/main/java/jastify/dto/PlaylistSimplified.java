@@ -34,7 +34,7 @@ public class PlaylistSimplified {
     @JsonProperty("snapshot_id")
     private String snapshotId;
 
-    private PlaylistTracks tracks;
+    private Tracks tracks;
 
     private String type;
 

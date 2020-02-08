@@ -11,8 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jastify.common.Const;
 import jastify.dto.Playlist;
+import jastify.dto.PlaylistTracks;
 import jastify.dto.Snapshot;
 import lombok.Setter;
+import okhttp3.HttpUrl;
+import okhttp3.HttpUrl.Builder;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
@@ -143,5 +146,43 @@ public class PlaylistService {
                         .addHeader("Content-Type", "application/json")
                         .build()),
                 Snapshot.class);
+    }
+
+    /**
+     * GET https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+     * 
+     * @param playlistId
+     * @return
+     */
+    public PlaylistTracks getPlaylistTracks(String playlistId, String fileds,
+            int limit, int offset, String market) {
+        final String url = JastifyUtils.get("playlists.getTracks", playlistId);
+
+        Builder b = HttpUrl.parse(url).newBuilder();
+
+        if (fileds != null && !fileds.isEmpty()) {
+            b.addEncodedQueryParameter("fileds", "");
+        }
+
+        if (market != null && !market.isEmpty()) {
+            b.addEncodedQueryParameter("market", market);
+        }
+
+        if (0 < limit) {
+            b.addEncodedQueryParameter("limit", String.valueOf(limit));
+        }
+
+        if (0 < offset) {
+            b.addEncodedQueryParameter("offset", String.valueOf(offset));
+        }
+
+        return JastifyUtils
+                .setResult(
+                        JastifyUtils.sendRequest(
+                                new Request.Builder().url(b.build())
+                                        .addHeader(Const.TOKEN_KEY,
+                                                Const.TOKEN_PREFIX + token)
+                                        .build()),
+                        PlaylistTracks.class);
     }
 }

@@ -25,6 +25,7 @@ import jastify.dto.Device;
 import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
 import jastify.dto.Playlist;
+import jastify.dto.PlaylistTracks;
 import jastify.dto.RecommendationsResponse;
 import jastify.dto.RelatedArtsits;
 import jastify.dto.SearchResultAlbums;
@@ -383,6 +384,12 @@ public class Jastify {
                 isPublic,
                 collaborative,
                 description);
+    }
+
+    public PlaylistTracks getPlaylistTracks(String playlistId, String fileds,
+            int offset, int limit, String market) {
+        return playlist
+                .getPlaylistTracks(playlistId, fileds, limit, offset, market);
     }
 
     /**

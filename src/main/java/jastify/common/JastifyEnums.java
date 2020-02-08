@@ -26,11 +26,19 @@ public class JastifyEnums {
         }
     }
 
+    public enum Market {
+        none(""), fromToken("from_token");
+
+        @Getter
+        private String name;
+
+        Market(String name) {
+            this.name = name;
+        }
+    }
+
     /**
      * standard Pitch Class notation
-     * 
-     * @author Tatsufumi
-     *
      */
     public enum Pitch {
         C(0), C_sharp(1), D_flat(1), D(2), D_sharp(3), E_flat(3), E(4), F(

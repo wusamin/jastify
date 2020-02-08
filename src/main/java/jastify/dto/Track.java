@@ -22,6 +22,8 @@ public class Track {
     @JsonProperty("duration_ms")
     private int durationMs;
 
+    private boolean episode;
+
     private boolean explicit;
 
     @JsonProperty("external_ids")
@@ -49,6 +51,8 @@ public class Track {
 
     @JsonProperty("preview_url")
     private String previewUrl;
+
+    private boolean track;
 
     @JsonProperty("track_number")
     private int trackNumber;
