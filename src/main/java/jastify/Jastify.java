@@ -20,6 +20,7 @@ import jastify.dto.AlbumList;
 import jastify.dto.AlbumSimplified;
 import jastify.dto.Artist;
 import jastify.dto.ArtistSimplified;
+import jastify.dto.AudioFeatures;
 import jastify.dto.Category;
 import jastify.dto.Device;
 import jastify.dto.Devices;
@@ -76,6 +77,8 @@ public class Jastify {
 
     private PlaylistService playlist;
 
+    private TrackService track;
+
     private Jastify() {
     }
 
@@ -93,6 +96,7 @@ public class Jastify {
         album = new AlbumsService(token);
         browse = new BrowseService(token);
         playlist = new PlaylistService(token);
+        track = new TrackService(token);
     }
 
     private void distributeToken(String token) {
@@ -102,6 +106,7 @@ public class Jastify {
         album.setToken(token);
         browse.setToken(token);
         playlist.setToken(token);
+        track.setToken(token);
     }
 
     public Map<String, String> search(String[] searchWords, String market,
@@ -515,6 +520,16 @@ public class Jastify {
      */
     public RelatedArtsits relatedArtists(String artistID) {
         return artsits.relatedArtists(artistID);
+    }
+
+    /**
+     * get audio features for track specified trackId.
+     * 
+     * @param trackId
+     * @return
+     */
+    public AudioFeatures getAudioFeatures(String trackId) {
+        return track.getAudioFeatures(trackId);
     }
 
     /**
