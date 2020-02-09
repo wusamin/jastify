@@ -23,11 +23,12 @@ public class PlaylistParameter {
         }
 
         if (isPublic != null) {
-            r.put("public", String.valueOf(isPublic));
+            r.put("public", String.valueOf(isPublic.booleanValue()));
         }
 
         if (collaborative != null) {
-            r.put("collaborative", String.valueOf(collaborative));
+            r.put("collaborative",
+                    String.valueOf(collaborative.booleanValue()));
         }
 
         if (description != null) {
