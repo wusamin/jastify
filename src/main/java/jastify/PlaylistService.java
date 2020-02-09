@@ -13,6 +13,7 @@ import jastify.common.Const;
 import jastify.dto.Playlist;
 import jastify.dto.PlaylistTracks;
 import jastify.dto.Snapshot;
+import jastify.parameter.PlaylistParameter;
 import lombok.Setter;
 import okhttp3.HttpUrl;
 import okhttp3.HttpUrl.Builder;
@@ -73,6 +74,33 @@ public class PlaylistService {
                         .addHeader("Content-Type", "application/json")
                         .build()),
                 Snapshot.class);
+    }
+
+    /**
+     * PUT https://api.spotify.com/v1/playlists/{playlist_id}
+     * 
+     * @param playlistId
+     * @param param
+     * @return
+     */
+    public void changePlaylistDetail(String playlistId,
+            PlaylistParameter param) {
+        final String url =
+            JastifyUtils.get("playlists.changePlaylistDetail", playlistId);
+
+        String rb = null;
+
+        try {
+            rb = new ObjectMapper().writeValueAsString(param.toMap());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        JastifyUtils.sendRequest(new Request.Builder().url(url)
+                .put(RequestBody.create(Const.JSON, rb))
+                .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
+                .addHeader("Content-Type", "application/json")
+                .build());
     }
 
     /**

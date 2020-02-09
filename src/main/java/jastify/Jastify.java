@@ -37,6 +37,7 @@ import jastify.dto.SpotifySearchAlbums;
 import jastify.dto.Track;
 import jastify.dto.UsersPlaylists;
 import jastify.dto.UsersProfile;
+import jastify.parameter.PlaylistParameter;
 import jastify.parameter.TuneableTrack;
 import lombok.Getter;
 import lombok.Setter;
@@ -365,6 +366,17 @@ public class Jastify {
     public Snapshot addTracksToPlaylist(String playlistId, String[] tracks,
             int position) {
         return playlist.addTracksToPlaylist(playlistId, tracks, position);
+    }
+
+    /**
+     * change playlist's detail.
+     * 
+     * @param playlistId
+     * @param p
+     * @return
+     */
+    public void changePlaylistDetail(String playlistId, PlaylistParameter p) {
+        playlist.changePlaylistDetail(playlistId, p);
     }
 
     /**
