@@ -52,4 +52,19 @@ public class JastifyEnums {
             this.code = code;
         }
     }
+
+    /**
+     * Type of tuneable track attributes.
+     *
+     */
+    public enum TuneableType {
+        MIN("min_"), MAX("max_"), TARGET("target_");
+
+        @Getter
+        private String name;
+
+        TuneableType(String name) {
+            this.name = name;
+        }
+    }
 }

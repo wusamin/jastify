@@ -4,10 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jastify.common.JastifyEnums.Pitch;
+import jastify.common.JastifyEnums.TuneableType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class TuneableTrack {
+
+    public TuneableTrack(TuneableType t) {
+        paramType = t.getName();
+    }
+
+    private String paramType;
 
     /**
      * The acousticness allows in 0.0 to 1.0
@@ -82,46 +91,47 @@ public class TuneableTrack {
     public Map<String, String> toMap() {
         Map<String, String> r = new HashMap<>();
         if (acousticness != 0)
-            r.put("acousticness", String.valueOf(acousticness));
+            r.put(paramType + "acousticness", String.valueOf(acousticness));
 
         if (danceability != 0)
-            r.put("danceability", String.valueOf(danceability));
+            r.put(paramType + "danceability", String.valueOf(danceability));
 
         if (durationMs != 0)
-            r.put("duration_ms", String.valueOf(durationMs));
+            r.put(paramType + "duration_ms", String.valueOf(durationMs));
 
         if (energy != 0)
-            r.put("energy", String.valueOf(energy));
+            r.put(paramType + "energy", String.valueOf(energy));
 
         if (instrumentalness != 0)
-            r.put("instrumentalness", String.valueOf(instrumentalness));
+            r.put(paramType + "instrumentalness",
+                    String.valueOf(instrumentalness));
 
         if (key != null)
-            r.put("key", String.valueOf(key.getCode()));
+            r.put(paramType + "key", String.valueOf(key.getCode()));
 
         if (liveness != 0)
-            r.put("liveness", String.valueOf(liveness));
+            r.put(paramType + "liveness", String.valueOf(liveness));
 
         if (loudness != 0)
-            r.put("loudness", String.valueOf(loudness));
+            r.put(paramType + "loudness", String.valueOf(loudness));
 
         if (mode != 0)
-            r.put("mode", String.valueOf(mode));
+            r.put(paramType + "mode", String.valueOf(mode));
 
         if (popularity != 0)
-            r.put("popularity", String.valueOf(popularity));
+            r.put(paramType + "popularity", String.valueOf(popularity));
 
         if (speechiness != 0)
-            r.put("speechiness", String.valueOf(speechiness));
+            r.put(paramType + "speechiness", String.valueOf(speechiness));
 
         if (tempo != 0)
-            r.put("tempo", String.valueOf(tempo));
+            r.put(paramType + "tempo", String.valueOf(tempo));
 
         if (timeSignature != 0)
-            r.put("time_signature", String.valueOf(timeSignature));
+            r.put(paramType + "time_signature", String.valueOf(timeSignature));
 
         if (valence != 0)
-            r.put("valence", String.valueOf(valence));
+            r.put(paramType + "valence", String.valueOf(valence));
 
         return r;
     }
