@@ -6,17 +6,15 @@ import java.util.Map;
 import jastify.common.JastifyEnums.Pitch;
 import jastify.common.JastifyEnums.TuneableType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class TuneableTrack {
 
     public TuneableTrack(TuneableType t) {
         paramType = t.getName();
     }
 
-    private String paramType;
+    final private String paramType;
 
     /**
      * The acousticness allows in 0.0 to 1.0

@@ -58,7 +58,7 @@ public class JastifyEnums {
      *
      */
     public enum TuneableType {
-        MIN("min_"), MAX("max_"), TARGET("target_");
+        MIN("min_"), MAX("max_"), TARGET("target_"), EMPTY("");
 
         @Getter
         private String name;
