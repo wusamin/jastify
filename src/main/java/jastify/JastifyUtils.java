@@ -30,17 +30,13 @@ public class JastifyUtils {
     }
 
     protected static Map<String, Object> parseJsonNest(String json) {
-        TypeReference<HashMap<String, Object>> reference =
-            new TypeReference<HashMap<String, Object>>() {
-            };
-        HashMap<String, Object> jsonMap = null;
         try {
-            jsonMap = new ObjectMapper().readValue(json, reference);
-
-        } catch (IOException e) {
+            return new ObjectMapper().readValue(json,
+                    new TypeReference<HashMap<String, Object>>() {
+                    });
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return jsonMap;
     }
 
     protected static Map<String, String> sendRequest(Request request) {
