@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jastify.common.Const;
 import jastify.dto.Playlist;
 import jastify.dto.PlaylistTracks;
+import jastify.dto.Playlists;
 import jastify.dto.Snapshot;
 import jastify.parameter.PlaylistParameter;
 import lombok.Setter;
@@ -27,6 +28,37 @@ public class PlaylistService {
 
     public PlaylistService(String token) {
         this.token = token;
+    }
+
+    /**
+     * GET https://api.spotify.com/v1/me/playlists
+     * 
+     * @param limit Default:20, Minimum:1, Maximum:50.
+     * @param offset
+     * @return
+     */
+    public Playlists getCunrretUsersPlaylists(int limit, int offset) {
+        final String url =
+            JastifyUtils.get("playlists.getCurrentUsersPlaylists");
+
+        Builder b = HttpUrl.parse(url).newBuilder();
+
+        if (1 <= limit && limit <= 50) {
+            b.addEncodedQueryParameter("limit", String.valueOf(limit));
+        }
+
+        if (1 <= offset) {
+            b.addEncodedQueryParameter("offset", String.valueOf(offset));
+        }
+
+        return JastifyUtils
+                .setResult(
+                        JastifyUtils.sendRequest(
+                                new Request.Builder().url(b.build())
+                                        .addHeader(Const.TOKEN_KEY,
+                                                Const.TOKEN_PREFIX + token)
+                                        .build()),
+                        Playlists.class);
     }
 
     /**

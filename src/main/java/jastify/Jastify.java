@@ -27,6 +27,7 @@ import jastify.dto.Devices;
 import jastify.dto.PlayingItem;
 import jastify.dto.Playlist;
 import jastify.dto.PlaylistTracks;
+import jastify.dto.Playlists;
 import jastify.dto.RecommendationsResponse;
 import jastify.dto.RelatedArtsits;
 import jastify.dto.SearchResultAlbums;
@@ -358,6 +359,17 @@ public class Jastify {
                         .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
                         .build()),
                 UsersProfile.class);
+    }
+
+    /**
+     * Gets currnet user's playlists.
+     * 
+     * @param limit efault:20, Minimum:1, Maximum:50.
+     * @param offset
+     * @return
+     */
+    public Playlists getUsersPlaylists(int limit, int offset) {
+        return playlist.getCunrretUsersPlaylists(limit, offset);
     }
 
     /**
