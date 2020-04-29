@@ -20,6 +20,7 @@ import jastify.dto.AlbumList;
 import jastify.dto.AlbumSimplified;
 import jastify.dto.Artist;
 import jastify.dto.ArtistSimplified;
+import jastify.dto.AudioFeature;
 import jastify.dto.AudioFeatures;
 import jastify.dto.Category;
 import jastify.dto.Device;
@@ -540,8 +541,18 @@ public class Jastify {
      * @param trackId
      * @return
      */
-    public AudioFeatures getAudioFeatures(String trackId) {
-        return track.getAudioFeatures(trackId);
+    public AudioFeature getAudioFeature(String trackId) {
+        return track.getAudioFeature(trackId);
+    }
+
+    /**
+     * Get audio features for multiple tracks based on their Spotify IDs.
+     * 
+     * @param trackIds
+     * @return
+     */
+    public AudioFeatures getAudioFeatures(String[] trackIds) {
+        return track.getAudioFeatures(trackIds);
     }
 
     /**
