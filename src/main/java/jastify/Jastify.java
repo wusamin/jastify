@@ -423,6 +423,16 @@ public class Jastify {
     }
 
     /**
+     * Transfer playback to a new device and determine if it should start playing.
+     * 
+     * @param deviceId
+     * @param play
+     */
+    public void transferUsersPlayback(String deviceId, boolean play) {
+        player.transferUsersPlayback(deviceId, play);
+    }
+
+    /**
      * remove tracks from playlist.
      * 
      * @param playlistId

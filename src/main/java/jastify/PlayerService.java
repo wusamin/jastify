@@ -1,5 +1,11 @@
 package jastify;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jastify.common.Const;
 import jastify.dto.Device;
 import jastify.dto.Devices;
@@ -77,5 +83,38 @@ public class PlayerService {
                         .addHeader(Const.TOKEN_KEY, Const.TOKEN_PREFIX + token)
                         .build()),
                 Devices.class);
+    }
+
+    /**
+     * PUT https://api.spotify.com/v1/me/player
+     */
+    protected void transferUsersPlayback(String deviceId, boolean play) {
+        final String url = JastifyUtils.get("me.player.transferUsersPlayback");
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("device_ids", new String[] { deviceId });
+        map.put("play", play);
+
+        String rb = null;
+
+        try {
+            rb = new ObjectMapper().writeValueAsString(map);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        JastifyUtils
+                .sendRequest(
+                        new Request.Builder()
+                                .url(HttpUrl.parse(url)
+                                        .newBuilder()
+                                        .addEncodedQueryParameter("device_id",
+                                                deviceId)
+                                        .build())
+                                .put(RequestBody.create(Const.JSON, rb))
+                                .addHeader(Const.TOKEN_KEY,
+                                        Const.TOKEN_PREFIX + token)
+                                .build());
     }
 }
